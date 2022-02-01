@@ -14,16 +14,12 @@ void gen_ans(vector<iii> &ans, int sx, int sy, int ex, int ey, int x, int y) {
         { midX + 1, midY + 1 }
     };
 
-    // 2 x 2 case
-    if(ex - sx == 1 && ey - sy == 1) {
-        int idx;
-        if(sx == x && sy == y) idx = 0;
-        if(sx + 1 == x && sy == y) idx = 1;
-        if(sx == x && sy + 1 == y) idx = 2;
-        if(sx + 1 == x && sy + 1 == y) idx = 3;
-        ans.emplace_back(idx, make_pair(sx, sy));
+    // 1 x 1 case
+    if(sx == ex && sy == ey) {
         return;
     }
+
+    int idx = 0;
 
     // Hole on top left
     // 01
@@ -31,7 +27,7 @@ void gen_ans(vector<iii> &ans, int sx, int sy, int ex, int ey, int x, int y) {
     if(sx <= x && x <= midX && sy <= y && y <= midY) {
         param[0][0] = x;
         param[0][1] = y;
-        ans.emplace_back(0, make_pair(midX, midY));
+        idx = 0;
     }
 
     // Hole on top right
@@ -40,7 +36,7 @@ void gen_ans(vector<iii> &ans, int sx, int sy, int ex, int ey, int x, int y) {
     else if(midX + 1 <= x && x <= ex && sy <= y && y <= midY) {
         param[1][0] = x;
         param[1][1] = y;
-        ans.emplace_back(1, make_pair(midX, midY));
+        idx = 1;
     }
 
     // Hole on bottom left
@@ -49,7 +45,7 @@ void gen_ans(vector<iii> &ans, int sx, int sy, int ex, int ey, int x, int y) {
     else if(sx <= x && x <= midX && midY + 1 <= y && y <= ey) {
         param[2][0] = x;
         param[2][1] = y;
-        ans.emplace_back(2, make_pair(midX, midY));
+        idx = 2;
     }
 
     // Hole on bottom right
@@ -58,13 +54,14 @@ void gen_ans(vector<iii> &ans, int sx, int sy, int ex, int ey, int x, int y) {
     if(midX + 1 <= x && x <= ex && midY + 1 <= y && y <= ey) {
         param[3][0] = x;
         param[3][1] = y;
-        ans.emplace_back(3, make_pair(midX, midY));
+        idx = 3;
     }
 
     gen_ans(ans, sx, sy, midX, midY, param[0][0], param[0][1]);
     gen_ans(ans, midX + 1, sy, ex, midY, param[1][0], param[1][1]);
     gen_ans(ans, sx, midY + 1, midX, ey, param[2][0], param[2][1]);
     gen_ans(ans, midX + 1, midY + 1, ex, ey, param[3][0], param[3][1]);
+    ans.emplace_back(idx, make_pair(midX, midY));
 }
 
 int main() {

@@ -8,20 +8,18 @@ vector<int> edge[MXN];
 vector<int> edgeT[MXN];
 vector<int> pass(MXN, false);
 
-vector<pair<int, int>> final_time;
+stack<int> final_time;
 vector<int> comp_sz;
 
-void dfsT(int now, int &time) {
+void dfsT(int now) {
     pass[now] = true;
     for(auto &i: edgeT[now]) {
         if(!pass[i]) {
-            ++time;
-            dfsT(i, time);
+            dfsT(i);
         }
     }
 
-    ++time;
-    final_time.emplace_back(-time, now);
+    final_time.push(now);
 }
 
 int dfs(int now) {
@@ -51,16 +49,17 @@ int main() {
         }
     }
 
-    int time = 1;
     for(int i = 0; i < n; ++i) {
-        if(!pass[i]) dfsT(i, time);           
+        if(!pass[i]) dfsT(i);           
     }
 
-    sort(final_time.begin(), final_time.end());
     fill(pass.begin(), pass.begin() + n, false);
 
-    for(auto &i: final_time) {
-        if(!pass[i.second]) comp_sz.push_back(dfs(i.second));
+    while(final_time.size()) {
+        int now = final_time.top();
+
+        final_time.pop();
+        if(!pass[now]) comp_sz.push_back(dfs(now));
     }
 
     sort(comp_sz.begin(), comp_sz.end());

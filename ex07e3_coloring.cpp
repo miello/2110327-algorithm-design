@@ -2,6 +2,32 @@
 
 using namespace std;
 
+bool solve(vector<vector<int>> &edge, vector<int> &color, int now, int n, int mxCol) {
+    if(now == n) {
+        return true;
+    }
+
+    int sz = color.size();
+
+    for(int i = 0; i < mxCol; ++i) {
+        bool chk = true;
+        for(auto &j: edge[now]) {
+            if(i == color[j]) {
+                chk = false;
+                break;
+            }
+        }
+        
+        if(!chk) continue;
+    
+        color[now] = i;
+        if(solve(edge, color, now + 1, n, mxCol)) return true;
+        color[now] = -1;
+    }
+
+    return false;
+}
+
 int main() {
     cin.tie(NULL)->sync_with_stdio(false);
 
@@ -9,7 +35,6 @@ int main() {
     cin >> n >> m;
 
     vector<vector<int>> edge(n);
-    
 
     for(int i = 0; i < m; ++i) {
         int a, b;
@@ -18,44 +43,11 @@ int main() {
         edge[b].push_back(a);
     }
     
-    int ans = n;
-    for(int i = 0; i < n; ++i) {
-        queue<int> q;
-        q.push(i);
-
-        int tmp = -1;
+    for(int i = 1; i <= n; ++i) {
         vector<int> color(n, -1);
-                
-        while(!q.empty()) {
-            int now = q.front();
-            q.pop();
-
-            if(color[now] != -1) continue;
-
-            vector<bool> pass(n + 1, false);
-            for(auto &j: edge[now]) {
-                if(color[j] != -1) {
-                    pass[color[j]] = true;
-                    continue;
-                }
-                q.emplace(j);
-            }
-
-            for(int j = 0; j <= n; ++j) {
-                if(!pass[j]) {
-                    color[now] = j;
-                    break;
-                }
-            }
+        if(solve(edge, color, 0, n, i)) {
+            cout << i << endl;
+            break;
         }
-
-        for(int j = 0; j < n; ++j) {
-            if(color[j] == -1) continue;
-            tmp = max(tmp, color[j] + 1);
-        }
-        ans = min(tmp, ans);
     }
-
-
-    cout << ans;
 }
